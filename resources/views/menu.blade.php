@@ -26,7 +26,7 @@
                 </li>
                 
             
-                <li class="sidebar-item has-sub <?= ($currentMenu == 'user' || $currentMenu == 'event' || $currentMenu == 'jadwal'|| $currentMenu == 'suara' ) ? 'active' : '' ?>">
+                <li class="sidebar-item has-sub <?= ($currentMenu == 'user' || $currentMenu == 'event' || $currentMenu == 'jadwal'|| $currentMenu == 'suara' || $currentMenu == 'kalkulator' ) ? 'active' : '' ?>">
 
 <a href="#" class='sidebar-link'>
 <i data-feather="grid" width="20"></i> 
@@ -51,6 +51,10 @@
 </li>
 <li>
 <a href="{{ url('home/suara') }}">SUARA</a>
+</li>
+
+<li>
+<a href="{{ url('home/kalkulator') }}">KALKULATOR</a>
 </li>
 
 </ul>

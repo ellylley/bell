@@ -1745,4 +1745,97 @@ public function updateStatus($id_event, Request $request)
 }
 
 
+//kalkulator
+
+public function kalkulator()
+{
+    if (session()->get('level') == 0 || session()->get('level') == 1 || session()->get('level') == 2) {
+        $model = new M_model();
+        $id_user = session()->get('id'); // Get the logged-in user's ID
+        
+        $activity = 'Mengakses kalkulator'; // Deskripsi aktivitas
+        $this->addLog($id_user, $activity);
+        
+        // Fetch all history data
+        $all_history = $model->tampil('history', 'id');
+
+        // Convert $all_history to an array if it's an object
+        if (is_object($all_history)) {
+            $all_history = json_decode(json_encode($all_history), true);
+        }
+
+        // Filter the data to only include the entries where created_by is the logged-in user
+        $elly = array_filter($all_history, function($entry) use ($id_user) {
+            return $entry['created_by'] == $id_user;
+        });
+        
+        // Assign filtered data to the view
+        $data['elly'] = $elly;
+        
+        $where = array(
+            'id_setting' => 1
+        );
+        $data['setting'] = $model->getWhere('setting', $where);
+        $data['currentMenu'] = 'kalkulator'; // Sesuaikan dengan menu yang aktif
+        
+        // Load views
+        echo view('header', $data);
+        echo view('menu', $data);
+        echo view('kalkulator', $data);
+        echo view('footer');
+    } else {
+        return redirect()->route('home.login');
+    }
+}
+
+
+
+public function historyKalkulator(Request $request)
+{
+    $model = new M_model();
+    $id_user = session('id'); // Get user ID from session
+    $operation_type = 'standard'; // Set operation type
+
+    // Mengambil data yang dikirim dalam format JSON
+    $input_data = $request->input('expression'); // Mengambil data expression
+    $result = $request->input('result'); // Mengambil data result
+
+    // Prepare data to be inserted into the history table
+    $data = array(
+        'operation_type' => $operation_type,
+        'input_data' => $input_data,
+        'result' => $result,
+        'id_user' => $id_user, // Optional: if you want to track which user performed the operation
+        'created_at' => now(), 
+        'created_by' => $id_user,
+    );
+
+    // Insert the data into the history table
+    $model->tambah('history', $data);
+
+    // Optionally, you can return a response
+    return response()->json(['message' => 'History saved successfully']);
+}
+
+
+
+public function deleteKalkulator(Request $request)
+{
+    $model = new M_model();
+    $user_id = session('id'); // Ambil ID pengguna yang sedang login dari session
+
+    // Hapus record history berdasarkan created_by dan operation_type
+    $where = [
+        'created_by' => $user_id,
+        'operation_type' => 'standard'
+    ];
+
+    // Pastikan method hapus sesuai dengan cara Laravel bekerja
+    $model->hapus('history', $where);
+
+    // Kembalikan respons sukses
+    return response()->json(['success' => true]);
+}
+
+
     }

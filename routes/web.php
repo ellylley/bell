@@ -83,4 +83,8 @@ Route::get('/home/bell', [Controller::class, 'bell'])->name('home.bell');
 Route::post('/update-status/{id_event}', [Controller::class, 'updateStatus']);
 
 
+Route::get('/home/kalkulator', [Controller::class, 'kalkulator'])->name('home.kalkulator');
+Route::post('/home/history_kalkulator', [Controller::class, 'historyKalkulator']);
+Route::post('/home/delete_kalkulator', [Controller::class, 'deleteKalkulator']);
+
 
